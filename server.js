@@ -4,6 +4,9 @@
 // Optional. You will see this name in eg. 'ps' or 'top' command
 process.title = 'node-chat';
 
+var colors = require('./lib/colors_repository.js')
+var colorsRepository = new colors.repository();
+
 // Port where we'll run the websocket server
 var webSocketsServerPort = 1337;
 
@@ -26,11 +29,6 @@ function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;')
                       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-
-// Array with some colors
-var colors = [ 'red', 'green', 'blue', 'magenta', 'purple', 'plum', 'orange' ];
-// ... in random order
-colors.sort(function(a,b) { return Math.random() > 0.5; } );
 
 /**
  * HTTP server
@@ -79,7 +77,7 @@ wsServer.on('request', function(request) {
                 // remember user name
                 userName = htmlEntities(message.utf8Data);
                 // get random color and send it back to the user
-                userColor = colors.shift();
+                userColor = colorsRepository.getColor();
                 connection.sendUTF(JSON.stringify({ type:'color', data: userColor }));
                 console.log((new Date()) + ' User is known as: ' + userName
                             + ' with ' + userColor + ' color.');
@@ -115,7 +113,7 @@ wsServer.on('request', function(request) {
             // remove user from the list of connected clients
             clients.splice(index, 1);
             // push back user's color to be reused by another user
-            colors.push(userColor);
+            colorsRepository.returnColor(userColor);
         }
     });
 
