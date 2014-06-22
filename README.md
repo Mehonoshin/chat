@@ -8,6 +8,12 @@
 #### Запуск проекта
 * В консоли выполняем
 ```
-node server.js
+node server.js && node web.js
+```
+
+либо если стоит ruby и gem foreman
+
+```
+foreman start
 ```
 * В браузере запускаем frontend.html
