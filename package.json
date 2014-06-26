@@ -5,7 +5,9 @@
   "main": "server.js",
   "dependencies": {
     "websocket": "1.0.8",
-    "express": "3.x"
+    "express": "3.x",
+    "pg": "3.3.0",
+    "config": "0.4.36"
   },
   "devDependencies": {},
   "scripts": {
