@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
     <head>
         <meta charset="utf-8">
         <title>WebSockets - Simple chat</title>
@@ -19,9 +19,7 @@
         </style>
     </head>
     <body>
-        <ul class="nav nav-pills">
-        </ul>
-
+        <!--Navigation-->
         <nav class="navbar navbar-default" role="navigation">
           <div class="container-fluid">
             <div class="navbar-header">
@@ -38,6 +36,7 @@
           </div>
         </nav>
 
+        <!--Chat-->
         <div id="container">
           <div id="content"></div>
           <div>
@@ -46,7 +45,10 @@
           </div>
         </div>
 
+        {{2 + 2}}
+
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.13/angular.min.js"></script>
         <script src="frontend.js"></script>
     </body>
 </html>
