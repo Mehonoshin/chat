@@ -23,7 +23,10 @@
   app.directive('chatArea', function() {
     return {
       restrict: 'E',
-      templateUrl: 'chat-area.html'
+      templateUrl: 'chat-area.html',
+      link: function() {
+        chat();
+      }
     };
   });
 
