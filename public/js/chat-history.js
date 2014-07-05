@@ -11,10 +11,15 @@
     };
 
     this.setCurrentRange = function(range) {
-      $http.get('/api/history').success(function(data) {
+      this.currentRange = range;
+      this.loadCurrentRangeHistory();
+    };
+
+    this.loadCurrentRangeHistory = function() {
+      $http.get('/api/history?scope=' + this.currentRange).success(function(data) {
         history.messages = data;
       });
-      this.currentRange = range;
     };
+
   }]);
 })();
