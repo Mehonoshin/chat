@@ -10,7 +10,9 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/api/history', function(req, res) {
   var messagesHistory = [];
-  Message.loadAll(function(messages) {
+  // TODO:
+  // get from parameters lenght of interval instead all
+  Message.where({dateScope: 'all'}, function(messages) {
     messagesHistory = messages.reverse();
     res.send(messagesHistory);
   });
