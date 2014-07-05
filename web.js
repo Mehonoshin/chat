@@ -1,14 +1,17 @@
 var express = require('express');
-var app = express();
+var app     = express();
+var Message = require('./lib/message.js').message;
 
 var server = app.listen(3000, function() {
   console.log('Listening on port %d', server.address().port);
 });
 
-app.get('/', function(req, res){
-  res.sendfile('public/index.html');
-});
+app.use(express.static(__dirname + '/public'));
 
-app.get('/frontend.js', function(req, res){
-  res.sendfile('public/frontend.js');
+app.get('/api/history', function(req, res) {
+  var messagesHistory = [];
+  Message.where({dateScope: req.param('scope')}, function(messages) {
+    messagesHistory = messages.reverse();
+    res.send(messagesHistory);
+  });
 });

@@ -1,0 +1,27 @@
+<div ng-controller="HistoryController as history">
+  <ul class="nav nav-tabs" role="tablist">
+    <li ng-class="{ active:history.isCurrentRange('today') }">
+      <a href="#" ng-click="history.setCurrentRange('today')">Today</a>
+    </li>
+    <li ng-class="{ active:history.isCurrentRange('week') }">
+      <a href="#" ng-click="history.setCurrentRange('week')">This week</a>
+    </li>
+    <li ng-class="{ active:history.isCurrentRange('month') }">
+      <a href="#" ng-click="history.setCurrentRange('month')">This month</a>
+    </li>
+    <li ng-class="{ active:history.isCurrentRange('all') }">
+      <a href="#" ng-click="history.setCurrentRange('all')">From the beginning</a>
+    </li>
+  </ul>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{ history.currentRange }} history</h3>
+    </div>
+    <div class="panel-body" ng-repeat="message in history.messages">
+      <ul class="list-unstyled">
+        <li>{{ message.time | date:'dd.MM.yyyy h:mm' }}: {{ message.client.userName }} @ {{ message.text }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
