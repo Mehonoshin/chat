@@ -1,5 +1,5 @@
 (function(){
-  var app = angular.module('chat', ['chat-history']);
+  var app = angular.module('chat', ['chat-window', 'chat-history']);
 
   app.controller('NavigationController', function() {
     this.currentPage = 'index';
@@ -24,9 +24,6 @@
     return {
       restrict: 'E',
       templateUrl: 'chat-area.html',
-      link: function() {
-        chat();
-      }
     };
   });
 

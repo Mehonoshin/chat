@@ -9,16 +9,17 @@
   </head>
 
   <body ng-controller='NavigationController as navigation'>
-      <navigation-area></navigation-area>
+    <navigation-area></navigation-area>
 
-      <chat-area ng-show="navigation.isCurrentPage('index')"></chat-area>
-      <history-area ng-show="navigation.isCurrentPage('history')"></history-area>
+    <chat-area ng-show="navigation.isCurrentPage('index')"></chat-area>
+    <history-area ng-show="navigation.isCurrentPage('history')"></history-area>
 
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.13/angular.min.js"></script>
-      <script src="/js/chat.js"></script>
-      <script src="/js/chat-history.js"></script>
-      <script src="/js/chat-window.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.13/angular.min.js"></script>
+    <script src="/js/chat.js"></script>
+    <script src="/js/chat-history.js"></script>
+    <script src="/js/chat-window.js"></script>
+    <audio id="message-sound"><source src="/message.mp3" type="audio/mp3"/></audio>
   </body>
 
 </html>

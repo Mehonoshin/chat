@@ -1,8 +1,20 @@
-<div id="container">
-  <div id="content"></div>
+<div id="container" ng-controller="ChatController as chat">
+  <div id="content" ng-init="chat.initialize()">
+    <ul ng-repeat='message in messages'>
+      <li>{{ message.author }} @ {{ message.text }}</li>
+    </ul>
+  </div>
   <div>
-      <span id="status">Connecting...</span>
-      <input type="text" id="input" disabled="disabled" />
+    <span ng-show="chat.isState('connecting')">Connecting...</span>
+    <span ng-show="chat.isState('errorCorrupted')">Error</span>
+    <div ng-show="chat.isState('waitingForName')">
+      <span>Choose name:</span>
+      <input type="text" id="userName" ng-model="chat.userName" />
+    </div>
+    <div ng-show="chat.isState('active')">
+      <span>{{ chat.userName }}:</span>
+      <input type="text" id="messageText" />
+    </div>
   </div>
 </div>
 
