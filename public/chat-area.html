@@ -1,5 +1,10 @@
 <div id="container" ng-controller="ChatController as chat">
 
+  <div>
+    Disable sound:
+    <input type="checkbox" ng-model='chat.soundEnabled'>
+  </div>
+
   <div id="content" ng-init="chat.initialize()">
     <ul ng-repeat='message in messages'>
       <li>

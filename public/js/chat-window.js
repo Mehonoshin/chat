@@ -8,6 +8,7 @@
     $scope.userColor    = '';
     this.userName       = '';
     this.currentMessage = '';
+    this.soundEnabled   = true;
     this.connection     = null;
 
     // Public methods
@@ -37,6 +38,7 @@
         chat.loadHistory(message);
       } else if (action === 'message') {
         chat.processNewMessage(message);
+        chat.playSound();
       } else {
         console.log('Hmm..., I\'ve never seen JSON like this: ', json);
       }
@@ -44,6 +46,8 @@
       $anchorScroll();
     };
 
+    // TODO:
+    // move this data methods to some object like ChatData
     this.setUserName = function($event) {
       if ($event.keyCode === 13) {
         this.connection.send(this.userName);
@@ -90,6 +94,12 @@
       } catch (e) {
         console.log('This doesn\'t look like a valid JSON: ', message.data);
         return;
+      }
+    };
+
+    this.playSound = function() {
+      if (this.soundEnabled) {
+        document.getElementById('message-sound').play();
       }
     };
 
