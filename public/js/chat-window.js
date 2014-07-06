@@ -2,31 +2,18 @@
   var app = angular.module('chat-window', []);
 
   app.controller('ChatController', ['$scope', function($scope) {
-    var chat        = this;
-
-    $scope.messages   = [];
-    $scope.state      = 'connecting';
-    $scope.userColor  = '';
-
+    var chat            = this;
+    $scope.messages     = [];
+    $scope.state        = 'connecting';
+    $scope.userColor    = '';
     this.userName       = '';
     this.currentMessage = '';
     this.connection     = null;
 
     // Public methods
-
     this.initialize = function() {
-      // TODO:
-      // Maybe move to some WsConnection class
-      // new WsConnection(connOpnd, msgRcvd, connCorr);
-      window.WebSocket = window.WebSocket || window.MozWebSocket;
-      if (!window.WebSocket) {
-        alert('Sorry, but your browser doesnt support WebSockets.');
-      }
-
-      chat.connection           = new WebSocket(this.wsUrl());
-      chat.connection.onopen    = chat.connectionOpened;
-      chat.connection.onmessage = chat.messageRecieved;
-      chat.connection.onerror   = chat.connectionCorrupted;
+      var wsConnection = new WebsocketConnection();
+      this.connection  = wsConnection.connection(this.connectionOpened, this.messageRecieved, this.connectionCorrupted);
     };
 
     this.connectionOpened = function() {
@@ -74,7 +61,6 @@
     };
 
     // Private methods
-
     this.processNewMessage = function(message) {
       $scope.$apply(function() {
         $scope.messages.push(message);
@@ -94,18 +80,6 @@
           $scope.messages.push(message[i]);
         }
       });
-    };
-
-
-
-    // TODO:
-    // Extract to ws url builder class
-    this.wsUrl = function() {
-      var path = 'ws://' + window.location.hostname;
-      if (window.location.hostname == 'localhost') {
-        path = path + ':1337';
-      }
-      return path;
     };
 
     this.parseJSON = function(data) {
