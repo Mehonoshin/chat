@@ -12,6 +12,8 @@
     this.currentMessage = '';
     this.connection     = null;
 
+    // Public methods
+
     this.initialize = function() {
       // TODO:
       // Maybe move to some WsConnection class
@@ -34,7 +36,7 @@
     };
 
     this.connectionCorrupted = function(error) {
-      alert("Sorry, but there some problem with your connection or the server is down.");
+      console.log('ws error');
     };
 
     this.messageRecieved = function(message) {
@@ -43,21 +45,11 @@
       var message = json.data;
 
       if (action === 'color') {
-        $scope.$apply(function() {
-          $scope.userColor = message;
-          $scope.state = 'active';
-        });
-        // Set username's color here
+        chat.setUserColor(message);
       } else if (action === 'history') {
-        $scope.$apply(function() {
-          for (var i = 0; i < message.length; i++) {
-            $scope.messages.push(message[i]);
-          }
-        });
+        chat.loadHistory(message);
       } else if (action === 'message') {
-        $scope.$apply(function() {
-          $scope.messages.push(message);
-        });
+        chat.processNewMessage(message);
       } else {
         console.log('Hmm..., I\'ve never seen JSON like this: ', json);
       }
@@ -80,6 +72,31 @@
     this.isState = function(state) {
       return $scope.state == state;
     };
+
+    // Private methods
+
+    this.processNewMessage = function(message) {
+      $scope.$apply(function() {
+        $scope.messages.push(message);
+      });
+    };
+
+    this.setUserColor = function(message) {
+      $scope.$apply(function() {
+        $scope.userColor = message;
+        $scope.state = 'active';
+      });
+    };
+
+    this.loadHistory = function(message) {
+      $scope.$apply(function() {
+        for (var i = 0; i < message.length; i++) {
+          $scope.messages.push(message[i]);
+        }
+      });
+    };
+
+
 
     // TODO:
     // Extract to ws url builder class
