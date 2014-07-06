@@ -7,22 +7,21 @@
     $scope.messages   = [];
     $scope.state      = 'connecting';
 
-    this.userColor  = false;
-    this.userName   = false;
-    this.connection = null;
+    this.userColor      = '';
+    this.userName       = '';
+    this.currentMessage = '';
+    this.connection     = null;
 
     this.initialize = function() {
+      // TODO:
+      // Maybe move to some WsConnection class
+      // new WsConnection(connOpnd, msgRcvd, connCorr);
       window.WebSocket = window.WebSocket || window.MozWebSocket;
       if (!window.WebSocket) {
         alert('Sorry, but your browser doesnt support WebSockets.');
       }
 
-      var path = 'ws://' + window.location.hostname;
-      if (window.location.hostname == 'localhost') {
-        path = path + ':1337';
-      }
-
-      chat.connection           = new WebSocket(path);
+      chat.connection           = new WebSocket(this.wsUrl());
       chat.connection.onopen    = chat.connectionOpened;
       chat.connection.onmessage = chat.messageRecieved;
       chat.connection.onerror   = chat.connectionCorrupted;
@@ -40,21 +39,21 @@
 
     this.messageRecieved = function(message) {
       var json = chat.parseJSON(message.data);
+      var action = json.type;
 
-      if (json.type === 'color') {
+      if (action === 'color') {
         chat.userColor = json.data;
-        chat.userName = 'test';
         $scope.$apply(function() {
           $scope.state = 'active';
         });
         // Set username's color here
-      } else if (json.type === 'history') {
+      } else if (action === 'history') {
         $scope.$apply(function() {
-          for (var i=0; i < json.data.length; i++) {
+          for (var i = 0; i < json.data.length; i++) {
             $scope.messages.push(json.data[i]);
           }
         });
-      } else if (json.type === 'message') {
+      } else if (action === 'message') {
         $scope.$apply(function() {
           $scope.messages.push(json.data);
         });
@@ -63,13 +62,26 @@
       }
     };
 
-    this.setUserName = function() {
+    this.setUserName = function($event) {
+      if ($event.keyCode === 13) {
+        this.connection.send(this.userName);
+        $scope.state = 'active';
+      };
+    };
+
+    this.sendMessage = function($event) {
+      if ($event.keyCode === 13) {
+        this.connection.send(this.currentMessage);
+        this.currentMessage = '';
+      };
     };
 
     this.isState = function(state) {
       return $scope.state == state;
     };
 
+    // TODO:
+    // Extract to ws url builder class
     this.wsUrl = function() {
       var path = 'ws://' + window.location.hostname;
       if (window.location.hostname == 'localhost') {
