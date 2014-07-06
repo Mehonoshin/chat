@@ -6,8 +6,8 @@
 
     $scope.messages   = [];
     $scope.state      = 'connecting';
+    $scope.userColor  = '';
 
-    this.userColor      = '';
     this.userName       = '';
     this.currentMessage = '';
     this.connection     = null;
@@ -38,24 +38,25 @@
     };
 
     this.messageRecieved = function(message) {
-      var json = chat.parseJSON(message.data);
-      var action = json.type;
+      var json    = chat.parseJSON(message.data);
+      var action  = json.type;
+      var message = json.data;
 
       if (action === 'color') {
-        chat.userColor = json.data;
         $scope.$apply(function() {
+          $scope.userColor = message;
           $scope.state = 'active';
         });
         // Set username's color here
       } else if (action === 'history') {
         $scope.$apply(function() {
-          for (var i = 0; i < json.data.length; i++) {
-            $scope.messages.push(json.data[i]);
+          for (var i = 0; i < message.length; i++) {
+            $scope.messages.push(message[i]);
           }
         });
       } else if (action === 'message') {
         $scope.$apply(function() {
-          $scope.messages.push(json.data);
+          $scope.messages.push(message);
         });
       } else {
         console.log('Hmm..., I\'ve never seen JSON like this: ', json);

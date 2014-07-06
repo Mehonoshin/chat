@@ -1,7 +1,9 @@
 <div id="container" ng-controller="ChatController as chat">
   <div id="content" ng-init="chat.initialize()">
     <ul ng-repeat='message in messages'>
-      <li>{{ message.author }} @ {{ message.text }}</li>
+      <li>
+        <span style="color:{{ message.color }}">{{ message.author }}</span> @ {{ message.text }}
+      </li>
     </ul>
   </div>
   <div>
@@ -12,7 +14,7 @@
       <input type="text" id="userName" ng-keydown="chat.setUserName($event)" ng-model="chat.userName" />
     </div>
     <div ng-show="chat.isState('active')">
-      <span>{{ chat.userName }}:</span>
+      <span style='color: {{ userColor }};'>{{ chat.userName }}:</span>
       <input type="text" id="messageText" ng-keydown="chat.sendMessage($event)" ng-model="chat.currentMessage" />
     </div>
   </div>
