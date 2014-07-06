@@ -1,7 +1,7 @@
 (function() {
   var app = angular.module('chat-window', []);
 
-  app.controller('ChatController', ['$scope', function($scope) {
+  app.controller('ChatController', ['$scope', '$anchorScroll', '$location', function($scope, $anchorScroll, $location) {
     var chat            = this;
     $scope.messages     = [];
     $scope.state        = 'connecting';
@@ -40,6 +40,8 @@
       } else {
         console.log('Hmm..., I\'ve never seen JSON like this: ', json);
       }
+      $location.hash('bottom');
+      $anchorScroll();
     };
 
     this.setUserName = function($event) {
