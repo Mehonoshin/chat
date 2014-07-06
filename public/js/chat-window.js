@@ -1,132 +1,107 @@
-function chat() {
-  $(function () {
-      "use strict";
+(function() {
+  var app = angular.module('chat-window', []);
 
-      // for better performance - to avoid searching in DOM
-      var content = $('#content');
-      var input = $('#input');
-      var status = $('#status');
+  app.controller('ChatController', ['$scope', '$anchorScroll', '$location', function($scope, $anchorScroll, $location) {
+    var chat            = this;
+    $scope.messages     = [];
+    $scope.state        = 'connecting';
+    $scope.userColor    = '';
+    this.userName       = '';
+    this.currentMessage = '';
+    this.soundEnabled   = true;
+    this.connection     = null;
 
-      // my color assigned by the server
-      var myColor = false;
-      // my name sent to the server
-      var myName = false;
+    // Public methods
+    this.initialize = function() {
+      var wsConnection = new WebsocketConnection();
+      this.connection  = wsConnection.connection(this.connectionOpened, this.messageRecieved, this.connectionCorrupted);
+    };
 
-      // if user is running mozilla then use it's built-in WebSocket
-      window.WebSocket = window.WebSocket || window.MozWebSocket;
-
-      // if browser doesn't support WebSocket, just show some notification and exit
-      if (!window.WebSocket) {
-          content.html($('<p>', { text: 'Sorry, but your browser doesn\'t '
-                                      + 'support WebSockets.'} ));
-          input.hide();
-          $('span').hide();
-          return;
-      }
-
-      // open connection
-      var path = 'ws://' + window.location.hostname;
-      if (window.location.hostname == 'localhost') {
-         path = path + ':1337';
-      }
-      var connection = new WebSocket(path);
-
-      connection.onopen = function () {
-          // first we want users to enter their names
-          input.removeAttr('disabled');
-          status.text('Choose name:');
-      };
-
-      connection.onerror = function (error) {
-          // just in there were some problems with conenction...
-          content.html($('<p>', { text: 'Sorry, but there\'s some problem with your '
-                                      + 'connection or the server is down.' } ));
-      };
-
-      // most important part - incoming messages
-      connection.onmessage = function (message) {
-          // try to parse JSON message. Because we know that the server always returns
-          // JSON this should work without any problem but we should make sure that
-          // the massage is not chunked or otherwise damaged.
-          try {
-              var json = JSON.parse(message.data);
-          } catch (e) {
-              console.log('This doesn\'t look like a valid JSON: ', message.data);
-              return;
-          }
-
-          // NOTE: if you're not sure about the JSON structure
-          // check the server source code above
-          if (json.type === 'color') { // first response from the server with user's color
-              myColor = json.data;
-              status.text(myName + ': ').css('color', myColor);
-              input.removeAttr('disabled').focus();
-              // from now user can start sending messages
-          } else if (json.type === 'history') { // entire message history
-              // insert every single message to the chat window
-              for (var i=0; i < json.data.length; i++) {
-                  addMessage(json.data[i].author, json.data[i].text,
-                             json.data[i].color, new Date(json.data[i].time));
-              }
-          } else if (json.type === 'message') { // it's a single message
-              input.removeAttr('disabled'); // let the user write another message
-              addMessage(json.data.author, json.data.text,
-                         json.data.color, new Date(json.data.time));
-          } else {
-              console.log('Hmm..., I\'ve never seen JSON like this: ', json);
-          }
-      };
-
-      /**
-       * Send mesage when user presses Enter key
-       */
-      input.keydown(function(e) {
-          if (e.keyCode === 13) {
-              var msg = $(this).val();
-              if (!msg) {
-                  return;
-              }
-              // send the message as an ordinary text
-              connection.send(msg);
-              $(this).val('');
-              // disable the input field to make the user wait until server
-              // sends back response
-              input.attr('disabled', 'disabled');
-
-              // we know that the first message sent from a user their name
-              if (myName === false) {
-                  myName = msg;
-              }
-          }
+    this.connectionOpened = function() {
+      $scope.$apply(function() {
+        $scope.state = 'waitingForName';
       });
+    };
 
-      /**
-       * This method is optional. If the server wasn't able to respond to the
-       * in 3 seconds then show some error message to notify the user that
-       * something is wrong.
-       */
-      setInterval(function() {
-          if (connection.readyState !== 1) {
-              status.text('Error');
-              input.attr('disabled', 'disabled').val('Unable to comminucate '
-                                                   + 'with the WebSocket server.');
-          }
-      }, 3000);
+    this.connectionCorrupted = function(error) {
+      console.log('ws error');
+    };
 
-      /**
-       * Add message to the chat window
-       */
-      function addMessage(author, message, color, dt) {
-          content.append('<p><span style="color:' + color + '">' + author + '</span> @ ' +
-               + (dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours()) + ':'
-               + (dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes())
-               + ': ' + message + '</p>');
+    this.messageRecieved = function(message) {
+      var json    = chat.parseJSON(message.data);
+      var action  = json.type;
+      var message = json.data;
 
-               var scrollareaHeight = 0;
-               if (content[0]) {
-                 scrollareaHeight = content[0].scrollHeight;
-               }
-               content.scrollTop(scrollareaHeight);
+      if (action === 'color') {
+        chat.setUserColor(message);
+      } else if (action === 'history') {
+        chat.loadHistory(message);
+      } else if (action === 'message') {
+        chat.processNewMessage(message);
+        chat.playSound();
+      } else {
+        console.log('Hmm..., I\'ve never seen JSON like this: ', json);
       }
-  });
-}
+      $location.hash('bottom');
+      $anchorScroll();
+    };
+
+    // TODO:
+    // move this data methods to some object like ChatData
+    this.setUserName = function($event) {
+      if ($event.keyCode === 13) {
+        this.connection.send(this.userName);
+        $scope.state = 'active';
+      };
+    };
+
+    this.sendMessage = function($event) {
+      if ($event.keyCode === 13) {
+        this.connection.send(this.currentMessage);
+        this.currentMessage = '';
+      };
+    };
+
+    this.isState = function(state) {
+      return $scope.state == state;
+    };
+
+    // Private methods
+    this.processNewMessage = function(message) {
+      $scope.$apply(function() {
+        $scope.messages.push(message);
+      });
+    };
+
+    this.setUserColor = function(message) {
+      $scope.$apply(function() {
+        $scope.userColor = message;
+        $scope.state = 'active';
+      });
+    };
+
+    this.loadHistory = function(message) {
+      $scope.$apply(function() {
+        for (var i = 0; i < message.length; i++) {
+          $scope.messages.push(message[i]);
+        }
+      });
+    };
+
+    this.parseJSON = function(data) {
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        console.log('This doesn\'t look like a valid JSON: ', message.data);
+        return;
+      }
+    };
+
+    this.playSound = function() {
+      if (this.soundEnabled) {
+        document.getElementById('message-sound').play();
+      }
+    };
+
+  }]);
+})();

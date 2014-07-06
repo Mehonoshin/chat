@@ -1,8 +1,35 @@
-<div id="container">
-  <div id="content"></div>
+<div id="container" ng-controller="ChatController as chat">
+
   <div>
-      <span id="status">Connecting...</span>
-      <input type="text" id="input" disabled="disabled" />
+    Disable sound:
+    <input type="checkbox" ng-model='chat.soundEnabled'>
   </div>
+
+  <div id="content" ng-init="chat.initialize()">
+    <ul ng-repeat='message in messages'>
+      <li>
+        <span style="color:{{ message.color }}">{{ message.author }}</span> @ {{ message.text }}
+      </li>
+    </ul>
+    <a id="bottom"></a>
+  </div>
+
+  <br />
+
+  <div class='chat-controls'>
+    <span ng-show="chat.isState('connecting')">Connecting...</span>
+    <span ng-show="chat.isState('errorCorrupted')">Error</span>
+    <div class='' ng-show="chat.isState('waitingForName')">
+      <label for="userName"><span>Choose name:</span></label>
+      <input type="text" class="input-control form-control" id="userName" ng-keydown="chat.setUserName($event)" ng-model="chat.userName" />
+    </div>
+    <div class='' ng-show="chat.isState('active')">
+      <label for="messageText">
+        <span class='current-nickname' style='color: {{ userColor }};'>{{ chat.userName }}:</span>
+      </label>
+      <input type="text" class="message form-control" id="messageText" ng-keydown="chat.sendMessage($event)" ng-model="chat.currentMessage" />
+    </div>
+  </div>
+
 </div>
 
