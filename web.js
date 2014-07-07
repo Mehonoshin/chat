@@ -1,8 +1,10 @@
 var express = require('express');
 var app     = express();
 var Message = require('./lib/message.js').message;
+var config  = require('config');
+var webConfig = config.Web;
 
-var server = app.listen(3000, function() {
+var server = app.listen(webConfig.port, function() {
   console.log('Listening on port %d', server.address().port);
 });
 

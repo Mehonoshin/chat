@@ -4,5 +4,11 @@
     "dbname": "abutria_chat",
     "username": "postgres",
     "password": "postgres"
+  },
+  "Web": {
+    "port": "3000"
+  },
+  "Ws": {
+    "port": "1337"
   }
 }

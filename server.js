@@ -7,8 +7,10 @@ var Chat            = require('./lib/chat.js').chat;
 var http            = require('http');
 var webSocketServer = require('websocket').server;
 var logger          = require('./lib/logger.js');
+var config  = require('config');
+var wsConfig = config.Ws;
 
-var webSocketsServerPort = 1337;
+var webSocketsServerPort = wsConfig.port;
 
 var chat           = new Chat();
 var connectionPool = new core.ConnectionPool(chat);
