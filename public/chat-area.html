@@ -1,6 +1,6 @@
 <div id="container" ng-controller="ChatController as chat">
 
-  <div>
+  <div id="options">
     Disable sound:
     <input type="checkbox" ng-model='chat.soundEnabled'>
   </div>
@@ -16,7 +16,7 @@
 
   <br />
 
-  <div class='chat-controls'>
+  <div id="controls" class='chat-controls'>
     <span ng-show="chat.isState('connecting')">Connecting...</span>
     <span ng-show="chat.isState('errorCorrupted')">Error</span>
     <div class='' ng-show="chat.isState('waitingForName')">
