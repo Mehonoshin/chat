@@ -25,6 +25,7 @@
 
     this.connectionCorrupted = function(error) {
       console.log('ws error');
+      console.log(error);
     };
 
     this.messageRecieved = function(message) {

@@ -45,8 +45,10 @@ task :deploy => :environment do
     queue 'npm install > /dev/null'
 
     to :launch do
-      queue "cd ~/current && sudo forever restart web.js"
-      queue "cd ~/current && forever restart server.js"
+      queue "cd ~/current && sudo forever stop web.js"
+      queue "cd ~/current && sudo forever start web.js"
+      queue "cd ~/current && forever stop server.js"
+      queue "cd ~/current && forever start server.js"
     end
   end
 end
