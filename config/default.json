@@ -1,12 +1,12 @@
 {
   "Db": {
-    "host": "192.168.44.10",
+    "host": "localhost",
     "dbname": "abutria_chat",
     "username": "postgres",
     "password": "postgres"
   },
   "Web": {
-    "port": "3000"
+    "port": "80"
   },
   "Ws": {
     "port": "1337"
