@@ -21,9 +21,6 @@ body {
   height: 74%;
 }
 
-#options {
-}
-
 #content {
   padding: 5px;
   background: #ddd;
@@ -32,7 +29,3 @@ body {
   border: 1px solid #CCC;
   height: 100%;
 }
-
-#controls {
-}
-
