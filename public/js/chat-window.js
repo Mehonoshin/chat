@@ -39,6 +39,10 @@
       } else if (action === 'initialState') {
         chat.loadHistory(message.history);
         chat.loadMembersList(message.members);
+      } else if (action === 'membersList') {
+        chat.loadMembersList(message.members);
+      } else if (action === 'newMember') {
+        chat.processNewMessage(message);
       } else if (action === 'message') {
         chat.processNewMessage(message);
         chat.playSound();
@@ -94,12 +98,9 @@
 
     this.loadMembersList = function(members) {
       $scope.$apply(function() {
-        for (var i = 0; i < members.length; i++) {
-          $scope.members.push(members[i]);
-        }
+        $scope.members = members;
       });
     };
-
 
     this.parseJSON = function(data) {
       try {
