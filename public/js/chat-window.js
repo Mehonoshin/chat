@@ -41,7 +41,7 @@
         chat.loadMembersList(message.members);
       } else if (action === 'membersList') {
         chat.loadMembersList(message.members);
-      } else if (action === 'newMember') {
+      } else if (action === 'memberChange') {
         chat.processNewMessage(message);
       } else if (action === 'message') {
         chat.processNewMessage(message);
