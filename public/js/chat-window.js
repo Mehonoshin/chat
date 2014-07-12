@@ -6,6 +6,7 @@
     $scope.messages     = [];
     $scope.state        = 'connecting';
     $scope.userColor    = '';
+    $scope.members      = [];
     this.userName       = '';
     this.currentMessage = '';
     this.soundEnabled   = true;
@@ -35,14 +36,20 @@
 
       if (action === 'color') {
         chat.setUserColor(message);
-      } else if (action === 'history') {
-        chat.loadHistory(message);
+      } else if (action === 'initialState') {
+        chat.loadHistory(message.history);
+        chat.loadMembersList(message.members);
+      } else if (action === 'membersList') {
+        chat.loadMembersList(message.members);
+      } else if (action === 'memberChange') {
+        chat.processNewMessage(message);
       } else if (action === 'message') {
         chat.processNewMessage(message);
         chat.playSound();
       } else {
         console.log('Hmm..., I\'ve never seen JSON like this: ', json);
       }
+
       $location.hash('bottom');
       $anchorScroll();
     };
@@ -86,6 +93,12 @@
         for (var i = 0; i < message.length; i++) {
           $scope.messages.push(message[i]);
         }
+      });
+    };
+
+    this.loadMembersList = function(members) {
+      $scope.$apply(function() {
+        $scope.members = members;
       });
     };
 

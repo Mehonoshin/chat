@@ -21,9 +21,6 @@ body {
   height: 74%;
 }
 
-#options {
-}
-
 #content {
   padding: 5px;
   background: #ddd;
@@ -33,6 +30,6 @@ body {
   height: 100%;
 }
 
-#controls {
+#members {
+  margin-right: 70px;
 }
-
