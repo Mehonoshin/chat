@@ -30,6 +30,14 @@ body {
   height: 100%;
 }
 
+#content .message-time {
+  color: #FAFAFA;
+}
+
+#content li:hover {
+  background-color: #F5F5F5;
+}
+
 #members {
   margin-right: 70px;
 }

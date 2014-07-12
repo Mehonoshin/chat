@@ -15,8 +15,11 @@
     <div id="content" ng-init="chat.initialize()">
       <ul>
         <li ng-repeat='message in messages'>
+          <!--TODO:-->
+          <!-- Move these polymorphic messages to directive <message></message> -->
           <span ng-show='message.type == "reply"'>
             <span style="color:{{ message.color }}">{{ message.author }}</span>: {{ message.text }}
+            <span class="message-time pull-right">{{ message.time | date:'h:mm' }}</span>
           </span>
           <span ng-show='message.type == "system"' style="color:{{ message.color }}">
             *{{ message.text }}
