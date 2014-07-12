@@ -4,11 +4,11 @@
   app.controller('ChatController', ['$scope', '$anchorScroll', '$location', function($scope, $anchorScroll, $location) {
     var chat            = this;
     $scope.messages     = [];
+    $scope.members      = [];
     $scope.state        = 'connecting';
     $scope.userColor    = '';
-    $scope.members      = [];
+    $scope.currentMessage = '';
     this.userName       = '';
-    this.currentMessage = '';
     this.soundEnabled   = true;
     this.connection     = null;
 
@@ -54,6 +54,10 @@
       $anchorScroll();
     };
 
+    this.setNameToReply = function(name) {
+      $scope.currentMessage = name + ", " + $scope.currentMessage;
+    }
+
     // TODO:
     // move this data methods to some object like ChatData
     this.setUserName = function($event) {
@@ -65,8 +69,8 @@
 
     this.sendMessage = function($event) {
       if ($event.keyCode === 13) {
-        this.connection.send(this.currentMessage);
-        this.currentMessage = '';
+        this.connection.send($scope.currentMessage);
+        $scope.currentMessage = '';
       };
     };
 
