@@ -120,6 +120,27 @@
         document.getElementById('message-sound').play();
       }
     };
-
   }]);
+
+  app.directive('chatMessage', function() {
+    templateUrl = function() {
+    };
+
+    return {
+      restrict: 'E',
+      templateUrl: '/messages/base.html',
+      link: function(scope, element, attrs) {
+        scope.polymorphicTemplateUrl = function() {
+          var url = '/messages/reply.html';
+          if (scope.message.type == 'system') {
+            url = '/messages/system.html';
+          }
+          if (scope.message.text.substring(0, 3) == "/me") {
+            url = '/messages/third-face-reply.html';
+          }
+          return url;
+        }
+      }
+    };
+  });
 })();

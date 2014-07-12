@@ -15,12 +15,7 @@
     <div id="content" ng-init="chat.initialize()">
       <ul>
         <li ng-repeat='message in messages'>
-          <span ng-show='message.type == "reply"'>
-            <span style="color:{{ message.color }}">{{ message.author }}</span>: {{ message.text }}
-          </span>
-          <span ng-show='message.type == "system"' style="color:{{ message.color }}">
-            *{{ message.text }}
-          </span>
+          <chat-message></chat-message>
         </li>
       </ul>
       <a id="bottom"></a>
