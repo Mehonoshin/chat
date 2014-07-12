@@ -18,9 +18,11 @@
     <div class="panel-heading">
       <h3 class="panel-title">{{ history.currentRange }} history</h3>
     </div>
-    <div class="panel-body" ng-repeat="message in history.messages">
+    <div class="panel-body">
       <ul class="list-unstyled">
-        <li>{{ message.time | date:'dd.MM.yyyy h:mm' }}: {{ message.client.userName }} @ {{ message.text }}</li>
+        <li ng-repeat="message in history.messages">
+          {{ message.time | date:'dd.MM.yyyy h:mm' }}: {{ message.client.userName }} @ {{ message.text }}
+        </li>
       </ul>
     </div>
   </div>

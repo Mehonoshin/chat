@@ -29,3 +29,7 @@ body {
   border: 1px solid #CCC;
   height: 100%;
 }
+
+#members {
+  margin-right: 70px;
+}
