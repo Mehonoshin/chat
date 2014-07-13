@@ -1,7 +1,7 @@
 <div id="container" ng-controller="ChatController as chat">
 
   <div id="members" class='pull-left'>
-    <a class="list-group-item" ng-click='user.prependToCurrentMessage(member.userName)' href="#" ng-repeat='member in members'>
+    <a class="list-group-item" ng-click='user.prependToCurrentMessage(member.userName)' href="#" ng-repeat='member in chatState.members'>
       <span style="color:{{ member.userColor }}">{{ member.userName }}</span>
     </a>
   </div>
@@ -14,7 +14,7 @@
 
     <div id="content" ng-init="chat.initialize()">
       <ul>
-        <li ng-repeat='message in messages'>
+        <li ng-repeat='message in chatState.messages'>
           <chat-message></chat-message>
         </li>
       </ul>

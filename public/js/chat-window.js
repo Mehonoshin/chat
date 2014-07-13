@@ -2,11 +2,30 @@
   var app = angular.module('chat-window', []);
 
   app.controller('ChatController', ['$scope', '$anchorScroll', '$location', function($scope, $anchorScroll, $location) {
-    var chat            = this;
-    $scope.user         = new CurrentUser();
-    $scope.messages     = [];
-    $scope.members      = [];
-    this.connection     = null;
+    var chat             = this;
+    $scope.user          = new CurrentUser();
+    $scope.chatState     = new ChatState();
+
+    this.connection      = null;
+    var messageHandlers  = {
+      color: function(message) {
+        chat.setUserColor(message);
+      },
+      initialState: function(message) {
+        chat.loadHistory(message.history);
+        chat.loadMembersList(message.members);
+      },
+      membersList: function(message) {
+        chat.loadMembersList(message.members);
+      },
+      memberChange: function(message) {
+        chat.processNewMessage(message);
+      },
+      message: function(message) {
+        chat.processNewMessage(message);
+        chat.playSound();
+      }
+    };
 
     // Public methods
     this.initialize = function() {
@@ -26,25 +45,11 @@
     };
 
     this.messageRecieved = function(message) {
-      var json    = chat.parseJSON(message.data);
+      var json    = JsonParser(message.data);
       var action  = json.type;
       var message = json.data;
 
-      if (action === 'color') {
-        chat.setUserColor(message);
-      } else if (action === 'initialState') {
-        chat.loadHistory(message.history);
-        chat.loadMembersList(message.members);
-      } else if (action === 'membersList') {
-        chat.loadMembersList(message.members);
-      } else if (action === 'memberChange') {
-        chat.processNewMessage(message);
-      } else if (action === 'message') {
-        chat.processNewMessage(message);
-        chat.playSound();
-      } else {
-        console.log('Hmm..., I\'ve never seen JSON like this: ', json);
-      }
+      messageHandlers[action](message);
 
       $location.hash('bottom');
       $anchorScroll();
@@ -67,7 +72,7 @@
     // Private methods
     this.processNewMessage = function(message) {
       $scope.$apply(function() {
-        $scope.messages.push(message);
+        $scope.chatState.addMessage(message);
       });
     };
 
@@ -78,27 +83,18 @@
       });
     };
 
-    this.loadHistory = function(message) {
+    this.loadHistory = function(messages) {
       $scope.$apply(function() {
-        for (var i = 0; i < message.length; i++) {
-          $scope.messages.push(message[i]);
+        for (var i = 0; i < messages.length; i++) {
+          $scope.chatState.addMessage(messages[i]);
         }
       });
     };
 
     this.loadMembersList = function(members) {
       $scope.$apply(function() {
-        $scope.members = members;
+        $scope.chatState.setMembers(members);
       });
-    };
-
-    this.parseJSON = function(data) {
-      try {
-        return JSON.parse(data);
-      } catch (e) {
-        console.log('This doesn\'t look like a valid JSON: ', message.data);
-        return;
-      }
     };
 
     this.playSound = function() {
