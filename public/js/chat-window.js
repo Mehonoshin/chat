@@ -3,13 +3,9 @@
 
   app.controller('ChatController', ['$scope', '$anchorScroll', '$location', function($scope, $anchorScroll, $location) {
     var chat            = this;
+    $scope.user         = new CurrentUser();
     $scope.messages     = [];
     $scope.members      = [];
-    $scope.state        = 'connecting';
-    $scope.userColor    = '';
-    $scope.currentMessage = '';
-    this.userName       = '';
-    this.soundEnabled   = true;
     this.connection     = null;
 
     // Public methods
@@ -20,7 +16,7 @@
 
     this.connectionOpened = function() {
       $scope.$apply(function() {
-        $scope.state = 'waitingForName';
+        $scope.user.setState('waitingForName');
       });
     };
 
@@ -54,28 +50,18 @@
       $anchorScroll();
     };
 
-    this.setNameToReply = function(name) {
-      $scope.currentMessage = name + ", " + $scope.currentMessage;
-    }
-
-    // TODO:
-    // move this data methods to some object like ChatData
     this.setUserName = function($event) {
       if ($event.keyCode === 13) {
-        this.connection.send(this.userName);
-        $scope.state = 'active';
+        this.connection.send($scope.user.name);
+        $scope.user.setState('active');
       };
     };
 
     this.sendMessage = function($event) {
       if ($event.keyCode === 13) {
-        this.connection.send($scope.currentMessage);
-        $scope.currentMessage = '';
+        this.connection.send($scope.user.currentMessage);
+        $scope.user.resetCurrentMessage();
       };
-    };
-
-    this.isState = function(state) {
-      return $scope.state == state;
     };
 
     // Private methods
@@ -87,8 +73,8 @@
 
     this.setUserColor = function(message) {
       $scope.$apply(function() {
-        $scope.userColor = message;
-        $scope.state = 'active';
+        $scope.user.setColor(message);
+        $scope.user.setState('active');
       });
     };
 
@@ -116,7 +102,7 @@
     };
 
     this.playSound = function() {
-      if (this.soundEnabled) {
+      if ($scope.user.isSoundEnabled()) {
         document.getElementById('message-sound').play();
       }
     };

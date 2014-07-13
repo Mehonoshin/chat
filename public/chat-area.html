@@ -1,7 +1,7 @@
 <div id="container" ng-controller="ChatController as chat">
 
   <div id="members" class='pull-left'>
-    <a class="list-group-item" ng-click='chat.setNameToReply(member.userName)' href="#" ng-repeat='member in members'>
+    <a class="list-group-item" ng-click='user.prependToCurrentMessage(member.userName)' href="#" ng-repeat='member in members'>
       <span style="color:{{ member.userColor }}">{{ member.userName }}</span>
     </a>
   </div>
@@ -9,7 +9,7 @@
   <div class="chat-content">
     <div id="options">
       Disable sound:
-      <input type="checkbox" ng-model='chat.soundEnabled'>
+      <input type="checkbox" ng-model='user.soundEnabled'>
     </div>
 
     <div id="content" ng-init="chat.initialize()">
@@ -24,19 +24,19 @@
     <br />
 
     <div id="controls" class='chat-controls'>
-      <span ng-show="chat.isState('connecting')">Connecting...</span>
-      <span ng-show="chat.isState('errorCorrupted')">Error</span>
+      <span ng-show="user.isState('connecting')">Connecting...</span>
+      <span ng-show="user.isState('errorCorrupted')">Error</span>
 
-      <div class='' ng-show="chat.isState('waitingForName')">
+      <div class='' ng-show="user.isState('waitingForName')">
         <label for="userName"><span>Choose name:</span></label>
-        <input type="text" class="input-control form-control" id="userName" ng-keydown="chat.setUserName($event)" ng-model="chat.userName" />
+        <input type="text" class="input-control form-control" id="userName" ng-keydown="chat.setUserName($event)" ng-model="user.name" />
       </div>
 
-      <div class='' ng-show="chat.isState('active')">
+      <div class='' ng-show="user.isState('active')">
         <label for="messageText">
-          <span class='current-nickname' style='color: {{ userColor }};'>{{ chat.userName }}:</span>
+          <span class='current-nickname' style='color: {{ user.color }};'>{{ user.name }}:</span>
         </label>
-        <input type="text" class="message form-control" id="messageText" ng-keydown="chat.sendMessage($event)" ng-model="currentMessage" />
+        <input type="text" class="message form-control" id="messageText" ng-keydown="chat.sendMessage($event)" ng-model="user.currentMessage" />
       </div>
     </div>
   </div>
