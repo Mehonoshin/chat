@@ -17,3 +17,4 @@ node server.js && node web.js
 foreman start
 ```
 
+В config/local.json оверрайдим настройки порта для веб-интерфейса
