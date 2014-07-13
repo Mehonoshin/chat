@@ -16,4 +16,4 @@ node server.js && node web.js
 ```
 foreman start
 ```
-* В браузере запускаем frontend.html
+
